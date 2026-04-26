@@ -1,0 +1,294 @@
+/* ===== AUTH STYLES ===== */
+
+.auth-container {
+  display: flex;
+  height: 100vh;
+  background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-bg-secondary) 100%);
+}
+
+.auth-container.hidden {
+  display: none;
+}
+
+.auth-form {
+  display: none;
+  flex: 1;
+  padding: 2rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.auth-form.active {
+  display: flex;
+}
+
+.form-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 500px;
+  margin: auto;
+}
+
+.form-visual {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.visual-content {
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.shape {
+  position: absolute;
+  opacity: 0.1;
+  animation: float 6s ease-in-out infinite;
+}
+
+.shape-1 {
+  width: 300px;
+  height: 300px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  top: -50px;
+  right: -50px;
+}
+
+.shape-2 {
+  width: 200px;
+  height: 200px;
+  background: var(--accent-color);
+  border-radius: 30% 70% 70% 30%;
+  bottom: -50px;
+  left: -50px;
+  animation-delay: 2s;
+}
+
+.shape-3 {
+  width: 250px;
+  height: 250px;
+  background: var(--primary-color);
+  clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  top: 10%;
+  right: 10%;
+  animation-delay: 1s;
+}
+
+.shape-4 {
+  width: 180px;
+  height: 180px;
+  background: var(--accent-color);
+  border-radius: 0 50% 50% 50%;
+  bottom: 10%;
+  left: 10%;
+  animation-delay: 3s;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.icon-large {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.visual-content h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.visual-content p {
+  color: var(--light-text);
+  font-size: 1rem;
+}
+
+.form-header {
+  margin-bottom: 2rem;
+}
+
+.form-header h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--dark-text);
+}
+
+.form-header p {
+  color: var(--light-text);
+  font-size: 1rem;
+}
+
+.form-footer {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--light-text);
+}
+
+.form-footer a {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* ===== ROLE MODAL ===== */
+.role-modal {
+  max-width: 800px;
+  width: 90%;
+}
+
+.role-modal h2 {
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.role-modal > p {
+  text-align: center;
+  color: var(--light-text);
+  margin-bottom: 2rem;
+}
+
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.role-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.role-card:hover {
+  background: rgba(0, 212, 255, 0.1);
+  border-color: var(--primary-color);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.role-card h3 {
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 1.3rem;
+}
+
+.role-card p {
+  color: var(--light-text);
+  font-size: 0.9rem;
+}
+
+.role-icon {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.form-container {
+  animation: slideInLeft 0.5s ease;
+}
+
+.form-visual {
+  animation: slideInRight 0.5s ease;
+}
+
+/* ===== RESPONSIVE AUTH ===== */
+@media (max-width: 768px) {
+  .auth-container {
+    flex-direction: column;
+  }
+
+  .form-container {
+    max-width: 100%;
+    padding: 1rem;
+  }
+
+  .form-visual {
+    min-height: 300px;
+  }
+
+  .form-header h1 {
+    font-size: 2rem;
+  }
+
+  .role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .role-card {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .auth-container {
+    padding: 1rem;
+  }
+
+  .form-container {
+    padding: 0;
+  }
+
+  .form-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .form-header p {
+    font-size: 0.9rem;
+  }
+
+  .form-group {
+    margin-bottom: 1rem;
+  }
+
+  .btn-lg {
+    width: 100%;
+    padding: 12px 16px;
+  }
+
+  .role-card {
+    padding: 1rem;
+  }
+
+  .role-icon {
+    font-size: 2.5rem;
+  }
+}

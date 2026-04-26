@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VAULTPASS · Visitor Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- NOISE OVERLAY -->
+<div class="noise-overlay"></div>
+
+<!-- TOAST -->
+<div id="toast" class="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<!-- ═══════════════════════════════════════════
+     AUTH SCREEN
+════════════════════════════════════════════ -->
+<div id="authScreen" class="screen active">
+  <div class="auth-split">
+
+    <!-- LEFT PANEL -->
+    <div class="auth-left">
+      <div class="auth-left-inner">
+        <div class="brand-mark">
+          <div class="brand-hex">
+            <svg viewBox="0 0 48 48" fill="none"><polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="none" stroke="currentColor" stroke-width="2.5"/><polygon points="24,10 37,17 37,31 24,38 11,31 11,17" fill="currentColor" opacity="0.15"/><circle cx="24" cy="24" r="4" fill="currentColor"/></svg>
+          </div>
+          <span class="brand-name">VAULTPASS</span>
+        </div>
+        <div class="auth-hero">
+          <h1 class="auth-hero-title">Secure.<br/>Smart.<br/>Seamless.</h1>
+          <p class="auth-hero-sub">Next-generation visitor management for modern facilities. Every entry tracked, every pass verified.</p>
+        </div>
+        <div class="auth-stats">
+          <div class="auth-stat"><span class="auth-stat-num">99.9%</span><span class="auth-stat-label">Uptime</span></div>
+          <div class="auth-stat-div"></div>
+          <div class="auth-stat"><span class="auth-stat-num">3 Roles</span><span class="auth-stat-label">Access Levels</span></div>
+          <div class="auth-stat-div"></div>
+          <div class="auth-stat"><span class="auth-stat-num">QR</span><span class="auth-stat-label">Pass System</span></div>
+        </div>
+        <div class="auth-decorative">
+          <div class="deco-ring r1"></div>
+          <div class="deco-ring r2"></div>
+          <div class="deco-ring r3"></div>
+          <div class="deco-dot d1"></div>
+          <div class="deco-dot d2"></div>
+          <div class="deco-dot d3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT PANEL -->
+    <div class="auth-right">
+      <div class="auth-form-wrap">
+        <div class="auth-tabs">
+          <button class="atab active" id="tabLogin" onclick="switchTab('login')">Sign In</button>
+          <button class="atab" id="tabRegister" onclick="switchTab('register')">Register</button>
+          <div class="atab-indicator" id="tabIndicator"></div>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="formLogin" class="aform active">
+          <div class="form-header">
+            <h2>Welcome back</h2>
+            <p>Sign in to your workspace</p>
+          </div>
+          <div class="role-pills" id="loginRolePills">
+            <button class="rpill active" onclick="selectLoginRole('ADMIN',this)">
+              <span class="rpill-icon">⬡</span> Admin
+            </button>
+            <button class="rpill" onclick="selectLoginRole('SECURITY',this)">
+              <span class="rpill-icon">◉</span> Security
+            </button>
+            <button class="rpill" onclick="selectLoginRole('VISITOR',this)">
+              <span class="rpill-icon">◎</span> Visitor
+            </button>
+          </div>
+          <input type="hidden" id="loginRole" value="ADMIN"/>
+          <div class="fgroup">
+            <label>Email address</label>
+            <div class="finput-wrap">
+              <span class="finput-icon">@</span>
+              <input type="email" id="loginEmail" placeholder="you@company.com"/>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Password</label>
+            <div class="finput-wrap">
+              <span class="finput-icon">🔒</span>
+              <input type="password" id="loginPassword" placeholder="••••••••••"/>
+              <button class="finput-toggle" onclick="togglePwd('loginPassword',this)">Show</button>
+            </div>
+          </div>
+          <button class="btn-submit" onclick="handleLogin()">
+            <span>Sign In</span>
+            <span class="btn-arrow">→</span>
+          </button>
+          <p class="demo-note">✦ Demo mode: any email & password works</p>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="formRegister" class="aform">
+          <div class="form-header">
+            <h2>Create account</h2>
+            <p>Join VAULTPASS today</p>
+          </div>
+          <div class="role-pills" id="regRolePills">
+            <button class="rpill active" onclick="selectRegRole('VISITOR',this)">
+              <span class="rpill-icon">◎</span> Visitor
+            </button>
+            <button class="rpill" onclick="selectRegRole('SECURITY',this)">
+              <span class="rpill-icon">◉</span> Security
+            </button>
+            <button class="rpill" onclick="selectRegRole('ADMIN',this)">
+              <span class="rpill-icon">⬡</span> Admin
+            </button>
+          </div>
+          <input type="hidden" id="regRole" value="VISITOR"/>
+          <div class="fgroup">
+            <label>Full name</label>
+            <div class="finput-wrap">
+              <span class="finput-icon">✦</span>
+              <input type="text" id="regName" placeholder="Aditya Kumar"/>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Email address</label>
+            <div class="finput-wrap">
+              <span class="finput-icon">@</span>
+              <input type="email" id="regEmail" placeholder="you@company.com"/>
+            </div>
+          </div>
+          <div class="fgroup">
+            <label>Password</label>
+            <div class="finput-wrap">
+              <span class="finput-icon">🔒</span>
+              <input type="password" id="regPassword" placeholder="Min. 8 characters"/>
+              <button class="finput-toggle" onclick="togglePwd('regPassword',this)">Show</button>
+            </div>
+          </div>
+          <button class="btn-submit" onclick="handleRegister()">
+            <span>Create Account</span>
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     APP SHELL
+════════════════════════════════════════════ -->
+<div id="appShell" class="screen">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sb-brand">
+      <div class="sb-hex">
+        <svg viewBox="0 0 48 48" fill="none"><polygon points="24,2 44,13 44,35 24,46 4,35 4,13" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="24" cy="24" r="4" fill="currentColor"/></svg>
+      </div>
+      <span class="sb-brand-name">VAULTPASS</span>
+    </div>
+
+    <div class="sb-user" id="sbUser">
+      <div class="sb-avatar" id="sbAvatar"></div>
+      <div class="sb-user-info">
+        <div class="sb-user-name" id="sbName">—</div>
+        <div class="sb-user-role" id="sbRole">—</div>
+      </div>
+      <div class="sb-user-dot"></div>
+    </div>
+
+    <nav class="sb-nav" id="sbNav"></nav>
+
+    <div class="sb-footer">
+      <button class="sb-logout" onclick="logout()">
+        <span>⎋</span> Sign Out
+      </button>
+      <div class="sb-version">v2.0.0</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="app-main">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="burger" id="burgerBtn" onclick="toggleSidebar()">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="breadcrumb">
+          <span class="breadcrumb-root">VAULTPASS</span>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-page" id="pageTitle">Dashboard</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="topbar-time" id="topbarTime"></div>
+        <div class="topbar-notif" id="topbarNotif">
+          <span class="notif-dot"></span>
+          <span>⚑</span>
+        </div>
+      </div>
+    </header>
+    <div class="content" id="content"></div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal-veil" onclick="closeModal(event)">
+  <div class="modal-panel">
+    <div class="modal-top">
+      <div class="modal-title" id="modalTitle"></div>
+      <button class="modal-x" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<!-- MOBILE OVERLAY -->
+<div id="sidebarOverlay" class="sb-overlay" onclick="closeSidebar()"></div>
+
+<script src="app.js"></script>
+</body>
+</html>

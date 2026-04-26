@@ -1,0 +1,2250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VMS - Visitor Management System</title>
+    <style>
+        :root {
+            --primary-color: #00d4ff;
+            --primary-dark: #0099cc;
+            --secondary-color: #ff6b6b;
+            --accent-color: #ffd700;
+            --success-color: #51cf66;
+            --warning-color: #ffa500;
+            --danger-color: #ff6b6b;
+            --dark-bg: #0a0e27;
+            --dark-bg-secondary: #151a3f;
+            --dark-text: #ffffff;
+            --light-text: #b0b8c8;
+            --border-color: #2a3f5f;
+            --shadow: 0 8px 32px rgba(0, 212, 255, 0.1);
+            --shadow-lg: 0 16px 64px rgba(0, 212, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-bg-secondary) 100%);
+            color: var(--dark-text);
+            overflow-x: hidden;
+        }
+
+        /* UTILITIES */
+        .hidden { display: none !important; }
+        .active { display: block !important; }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--dark-text);
+            font-weight: 600;
+        }
+
+        p { color: var(--light-text); }
+
+        a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+            color: var(--dark-bg);
+            box-shadow: 0 4px 15px rgba(0, 212, 255, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--border-color);
+            color: var(--dark-text);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-text);
+            color: var(--dark-bg);
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: var(--dark-bg);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--dark-text);
+        }
+
+        .btn-lg {
+            padding: 12px 32px;
+            font-size: 1.1rem;
+            min-width: 200px;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 0.85rem;
+        }
+
+        .btn-logout {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background: var(--primary-color);
+            color: var(--dark-bg);
+        }
+
+        /* INPUTS */
+        input, textarea, select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            color: var(--dark-text);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background: rgba(0, 212, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+        }
+
+        input::placeholder {
+            color: var(--light-text);
+        }
+
+        /* NAVBAR */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(10, 14, 39, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .logo-icon {
+            font-size: 2rem;
+        }
+
+        .logo-text {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-link {
+            color: var(--light-text);
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+            background: rgba(0, 212, 255, 0.1);
+        }
+
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-greeting {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 260px;
+            background: rgba(21, 26, 63, 0.8);
+            backdrop-filter: blur(10px);
+            border-right: 1px solid var(--border-color);
+            position: fixed;
+            left: 0;
+            top: 60px;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            padding: 1.5rem 0;
+            z-index: 50;
+        }
+
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0 1rem;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--light-text);
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+            cursor: pointer;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            color: var(--primary-color);
+            background: rgba(0, 212, 255, 0.1);
+            border-left-color: var(--primary-color);
+            padding-left: 13px;
+        }
+
+        .menu-icon {
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+
+        .menu-text {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .sidebar-divider {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 1rem 0;
+        }
+
+        /* MAIN CONTENT */
+        .main-content {
+            margin-left: 260px;
+            margin-top: 60px;
+            padding: 2rem;
+            min-height: calc(100vh - 60px);
+        }
+
+        .view {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .page-header {
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* DASHBOARD */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            display: flex;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            background: rgba(0, 212, 255, 0.05);
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(0, 212, 255, 0.1);
+            flex-shrink: 0;
+        }
+
+        .stat-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--light-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* QUICK ACTIONS */
+        .quick-actions-container {
+            margin-top: 2rem;
+        }
+
+        .quick-actions-container h2 {
+            margin-bottom: 1rem;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-btn {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-color);
+            color: var(--dark-bg);
+            transform: translateY(-4px);
+        }
+
+        .action-icon {
+            font-size: 1.8rem;
+        }
+
+        /* TABLES */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table thead {
+            background: rgba(0, 212, 255, 0.05);
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .data-table th {
+            padding: 1rem;
+            text-align: left;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--dark-text);
+        }
+
+        .data-table tbody tr:hover {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .status-pending {
+            background: rgba(255, 165, 0, 0.2);
+            color: var(--warning-color);
+        }
+
+        .status-approved {
+            background: rgba(81, 207, 102, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-rejected {
+            background: rgba(255, 107, 107, 0.2);
+            color: var(--danger-color);
+        }
+
+        .status-active {
+            background: rgba(0, 212, 255, 0.2);
+            color: var(--primary-color);
+        }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark-bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--light-text);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+        }
+
+        /* AUTH STYLES */
+        .auth-container {
+            display: flex;
+            height: 100vh;
+            background: linear-gradient(135deg, var(--dark-bg) 0%, var(--dark-bg-secondary) 100%);
+        }
+
+        .auth-container.hidden {
+            display: none;
+        }
+
+        .auth-form {
+            display: none;
+            flex: 1;
+            padding: 2rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .auth-form.active {
+            display: flex;
+        }
+
+        .form-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-width: 500px;
+            margin: auto;
+        }
+
+        .form-visual {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .visual-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .icon-large {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .visual-content h2 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+        }
+
+        .visual-content p {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+
+        .form-header {
+            margin-bottom: 2rem;
+        }
+
+        .form-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+        }
+
+        .form-header p {
+            color: var(--light-text);
+            font-size: 1rem;
+        }
+
+        .form-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--light-text);
+        }
+
+        .form-footer a {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* ROLE MODAL */
+        .role-modal {
+            max-width: 800px;
+            width: 90%;
+        }
+
+        .role-modal h2 {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-modal > p {
+            text-align: center;
+            color: var(--light-text);
+            margin-bottom: 2rem;
+        }
+
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .role-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .role-card:hover {
+            background: rgba(0, 212, 255, 0.1);
+            border-color: var(--primary-color);
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .role-card h3 {
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .role-card p {
+            color: var(--light-text);
+            font-size: 0.9rem;
+        }
+
+        .role-icon {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* FORMS */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark-text);
+            font-weight: 500;
+        }
+
+        .form-group.checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .form-group.checkbox input {
+            width: 20px;
+            height: 20px;
+            margin-right: 0.5rem;
+            cursor: pointer;
+        }
+
+        .form-group.checkbox label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        /* SEARCH */
+        .search-input {
+            width: 100%;
+            max-width: 400px;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--dark-text);
+            font-size: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        /* PASSES GRID */
+        .passes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .pass-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .pass-card:hover {
+            background: rgba(0, 212, 255, 0.05);
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow);
+        }
+
+        .pass-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+
+        .pass-header h3 {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .pass-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .pass-details {
+            margin-bottom: 1rem;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            font-size: 0.9rem;
+        }
+
+        .detail-label {
+            color: var(--light-text);
+        }
+
+        .detail-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .pass-qr {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            margin: 1rem 0;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .qr-placeholder {
+            font-size: 1.5rem;
+            color: var(--light-text);
+        }
+
+        /* SCANNING */
+        .scanning-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .scanner-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .camera-feed {
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .camera-placeholder {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .camera-icon {
+            font-size: 3rem;
+        }
+
+        .scanner-input-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .scanner-input-section h3 {
+            margin-bottom: 1rem;
+        }
+
+        .scanner-input {
+            width: 100%;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+
+        .verification-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .verification-section h3 {
+            margin-bottom: 1rem;
+        }
+
+        .verification-box {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1.5rem;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .verification-success {
+            background: rgba(81, 207, 102, 0.1);
+            border-color: var(--success-color);
+        }
+
+        .verification-error {
+            background: rgba(255, 107, 107, 0.1);
+            border-color: var(--danger-color);
+        }
+
+        /* PROFILE */
+        .profile-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .profile-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .profile-card h2 {
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+        }
+
+        /* MYPASS */
+        .mypass-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
+        }
+
+        .pass-display {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .pass-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 100, 150, 0.1) 100%);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .no-pass-message {
+            text-align: center;
+            color: var(--light-text);
+        }
+
+        .no-pass-message p {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* NOTIFICATIONS */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--dark-text);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary-color);
+            z-index: 300;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification.success {
+            border-left-color: var(--success-color);
+        }
+
+        .notification.error {
+            border-left-color: var(--danger-color);
+        }
+
+        .notification.warning {
+            border-left-color: var(--warning-color);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1rem;
+                top: auto;
+            }
+
+            .sidebar-menu {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 1rem;
+                padding: 0;
+            }
+
+            .menu-item {
+                flex-direction: column;
+                text-align: center;
+                padding: 10px;
+            }
+
+            .main-content {
+                margin-left: 0;
+                margin-top: 0;
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .scanning-container {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-container {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .auth-container {
+                flex-direction: column;
+            }
+
+            .form-container {
+                max-width: 100%;
+                padding: 1rem;
+            }
+
+            .form-visual {
+                min-height: 300px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                flex-wrap: wrap;
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-menu {
+                width: 100%;
+                gap: 0.5rem;
+                margin-top: 0.5rem;
+                order: 3;
+            }
+
+            .nav-link {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+                border-radius: 8px;
+            }
+
+            .btn-lg {
+                width: 100%;
+                min-width: auto;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+
+            .role-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .passes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app"></div>
+
+    <!-- Role Selection Modal -->
+    <div id="roleModal" class="modal active">
+        <div class="modal-content role-modal">
+            <h2>Select Your Role</h2>
+            <p>Choose how you want to use VMS</p>
+            <div class="role-grid">
+                <div class="role-card" onclick="selectRole('admin')">
+                    <div class="role-icon">👨‍💼</div>
+                    <h3>Admin</h3>
+                    <p>Manage the entire system</p>
+                </div>
+                <div class="role-card" onclick="selectRole('security')">
+                    <div class="role-icon">🛡️</div>
+                    <h3>Security</h3>
+                    <p>Verify visitor passes</p>
+                </div>
+                <div class="role-card" onclick="selectRole('visitor')">
+                    <div class="role-icon">👤</div>
+                    <h3>Visitor</h3>
+                    <p>Register and request visit</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Container -->
+    <div id="authContainer" class="auth-container hidden">
+        <!-- Login Form -->
+        <div id="loginForm" class="auth-form active">
+            <div class="form-container">
+                <div class="form-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to your account</p>
+                </div>
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label for="loginEmail">Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
+                    </div>
+                    <div class="form-group checkbox">
+                        <input type="checkbox" id="rememberMe">
+                        <label for="rememberMe">Remember me</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                </form>
+                <p class="form-footer">Don't have an account? <a href="#" onclick="toggleAuthForm('signup'); return false;">Sign Up</a></p>
+            </div>
+            <div class="form-visual">
+                <div class="visual-content">
+                    <div class="icon-large">🔐</div>
+                    <h2>Secure Access</h2>
+                    <p>Your data is protected with industry-standard encryption</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupForm" class="auth-form">
+            <div class="form-container">
+                <div class="form-header">
+                    <h1>Create Account</h1>
+                    <p>Join our visitor management system</p>
+                </div>
+                <form onsubmit="handleSignup(event)">
+                    <div class="form-group">
+                        <label for="signupName">Full Name</label>
+                        <input type="text" id="signupName" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email Address</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com" required autocomplete="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPhone">Phone Number</label>
+                        <input type="tel" id="signupPhone" placeholder="+91 9876543210" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="••••••••" required autocomplete="new-password">
+                    </div>
+                    <div class="form-group">
+                        <label for="signupConfirmPassword">Confirm Password</label>
+                        <input type="password" id="signupConfirmPassword" placeholder="••••••••" required autocomplete="new-password">
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-lg">Create Account</button>
+                </form>
+                <p class="form-footer">Already have an account? <a href="#" onclick="toggleAuthForm('login'); return false;">Sign In</a></p>
+            </div>
+            <div class="form-visual">
+                <div class="visual-content">
+                    <div class="icon-large">✨</div>
+                    <h2>Get Started</h2>
+                    <p>Quick registration in just a few steps</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Dashboard Container -->
+    <div id="dashboardContainer" class="hidden">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="nav-brand">
+                <span class="logo-icon">🔐</span>
+                <span class="logo-text">VMS</span>
+            </div>
+            <div class="nav-menu">
+                <a href="#" class="nav-link active" onclick="navigateTo('dashboard'); return false;">Dashboard</a>
+                <a href="#" class="nav-link" id="navVisitors" style="display:none;" onclick="navigateTo('visitors'); return false;">Visitors</a>
+                <a href="#" class="nav-link" id="navRequests" style="display:none;" onclick="navigateTo('requests'); return false;">Requests</a>
+                <a href="#" class="nav-link" id="navPasses" style="display:none;" onclick="navigateTo('passes'); return false;">Passes</a>
+                <a href="#" class="nav-link" id="navTracking" style="display:none;" onclick="navigateTo('tracking'); return false;">Tracking</a>
+                <a href="#" class="nav-link" id="navScanning" style="display:none;" onclick="navigateTo('scanning'); return false;">Scan QR</a>
+            </div>
+            <div class="nav-user">
+                <span id="userGreeting" class="user-greeting">Welcome</span>
+                <button class="btn-logout" onclick="handleLogout()">Logout</button>
+            </div>
+        </nav>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-menu">
+                <a href="#" class="menu-item active" onclick="navigateTo('dashboard'); return false;" data-role="all">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">Dashboard</span>
+                </a>
+                <a href="#" class="menu-item" onclick="navigateTo('requests'); return false;" data-role="admin">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">Visit Requests</span>
+                </a>
+                <a href="#" class="menu-item" onclick="navigateTo('visitors'); return false;" data-role="admin">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">Visitors</span>
+                </a>
+                <a href="#" class="menu-item" onclick="navigateTo('passes'); return false;" data-role="admin">
+                    <span class="menu-icon">🎫</span>
+                    <span class="menu-text">Security Passes</span>
+                </a>
+                <a href="#" class="menu-item" onclick="navigateTo('tracking'); return false;" data-role="admin">
+                    <span class="menu-icon">📋</span>
+                    <span class="menu-text">Entry/Exit Logs</span>
+                </a>
+                <a href="#" class="menu-item" onclick="navigateTo('scanning'); return false;" data-role="security">
+                    <span class="menu-icon">📱</span>
+                    <span class="menu-text">Scan QR</span>
+                </a>
+                <a href="#" class="menu-item" onclick="navigateTo('mypass'); return false;" data-role="visitor">
+                    <span class="menu-icon">🎟️</span>
+                    <span class="menu-text">My Pass</span>
+                </a>
+                <a href="#" class="menu-item" onclick="navigateTo('history'); return false;" data-role="visitor">
+                    <span class="menu-icon">📄</span>
+                    <span class="menu-text">Visit History</span>
+                </a>
+                <hr class="sidebar-divider">
+                <a href="#" class="menu-item" onclick="navigateTo('profile'); return false;" data-role="all">
+                    <span class="menu-icon">⚙️</span>
+                    <span class="menu-text">Settings</span>
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard View -->
+            <section id="dashboardView" class="view active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                </div>
+
+                <!-- Admin Dashboard -->
+                <div id="adminDashboard" class="dashboard-grid hidden">
+                    <div class="stat-card">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Total Visitors</p>
+                            <h3 class="stat-value" id="totalVisitors">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Pending Requests</p>
+                            <h3 class="stat-value" id="pendingRequests">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Active Passes</p>
+                            <h3 class="stat-value" id="activePasses">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Today's Check-ins</p>
+                            <h3 class="stat-value" id="todayCheckIns">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Security Dashboard -->
+                <div id="securityDashboard" class="dashboard-grid hidden">
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Visitors Checked In</p>
+                            <h3 class="stat-value" id="checkedInToday">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Pending Verifications</p>
+                            <h3 class="stat-value" id="pendingVerifications">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Active on Premises</p>
+                            <h3 class="stat-value" id="activePremises">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Visitor Dashboard -->
+                <div id="visitorDashboard" class="dashboard-grid hidden">
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-content">
+                            <p class="stat-label">My Requests</p>
+                            <h3 class="stat-value" id="myRequests">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Approved Passes</p>
+                            <h3 class="stat-value" id="myApprovedPasses">0</h3>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📋</div>
+                        <div class="stat-content">
+                            <p class="stat-label">Total Visits</p>
+                            <h3 class="stat-value" id="totalVisits">0</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-container">
+                    <h2>Quick Actions</h2>
+                    <div class="quick-actions">
+                        <button class="action-btn" id="actionNewVisitor" onclick="navigateTo('requests')" style="display:none;">
+                            <span class="action-icon">➕</span>
+                            <span>New Request</span>
+                        </button>
+                        <button class="action-btn" id="actionApproveRequest" onclick="navigateTo('requests')" style="display:none;">
+                            <span class="action-icon">✔️</span>
+                            <span>Approve Request</span>
+                        </button>
+                        <button class="action-btn" id="actionScanQR" onclick="navigateTo('scanning')" style="display:none;">
+                            <span class="action-icon">📱</span>
+                            <span>Scan QR</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visit Requests View -->
+            <section id="requestsView" class="view">
+                <div class="page-header">
+                    <h1>Visit Requests</h1>
+                    <button class="btn btn-primary" onclick="openNewRequestModal()" id="btnNewRequest" style="display:none;">+ New Request</button>
+                </div>
+                <div class="requests-container">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Visitor Name</th>
+                                    <th>Email</th>
+                                    <th>Purpose</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visitors View -->
+            <section id="visitorsView" class="view">
+                <div class="page-header">
+                    <h1>All Visitors</h1>
+                    <input type="text" class="search-input" placeholder="Search visitors..." id="visitorSearch" onkeyup="filterVisitors()">
+                </div>
+                <div class="visitors-container">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Company</th>
+                                    <th>Visits</th>
+                                    <th>Last Visit</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="visitorsTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Security Passes View -->
+            <section id="passesView" class="view">
+                <div class="page-header">
+                    <h1>Security Passes</h1>
+                    <input type="text" class="search-input" placeholder="Search passes..." id="passSearch" onkeyup="filterPasses()">
+                </div>
+                <div class="passes-container">
+                    <div class="passes-grid" id="passesGrid">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Entry/Exit Tracking View -->
+            <section id="trackingView" class="view">
+                <div class="page-header">
+                    <h1>Entry/Exit Logs</h1>
+                    <div class="filter-group">
+                        <input type="date" id="trackingDate" onchange="filterTracking()">
+                        <select id="trackingFilter" onchange="filterTracking()">
+                            <option value="all">All</option>
+                            <option value="checkin">Check-in</option>
+                            <option value="checkout">Check-out</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="tracking-container">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Visitor Name</th>
+                                    <th>Pass ID</th>
+                                    <th>Type</th>
+                                    <th>Time</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody id="trackingTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- QR Scanning View -->
+            <section id="scanningView" class="view">
+                <div class="page-header">
+                    <h1>QR Code Scanner</h1>
+                </div>
+                <div class="scanning-container">
+                    <div class="scanner-section">
+                        <div class="camera-feed">
+                            <div id="cameraPlaceholder" class="camera-placeholder">
+                                <div class="camera-icon">📷</div>
+                                <p>Camera feed will appear here</p>
+                                <button class="btn btn-primary" onclick="startCamera()">Start Camera</button>
+                            </div>
+                        </div>
+                        <div class="scanner-input-section">
+                            <h3>Manual Entry</h3>
+                            <input type="text" id="manualPassCode" placeholder="Paste QR code or pass code here" class="scanner-input" autocomplete="off">
+                            <button class="btn btn-primary btn-lg" onclick="verifyPassCode()">Verify Pass</button>
+                        </div>
+                    </div>
+                    <div class="verification-section">
+                        <h3>Verification Result</h3>
+                        <div id="verificationResult" class="verification-box">
+                            <p>No scan result yet</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- My Pass View (Visitor) -->
+            <section id="myPassView" class="view">
+                <div class="page-header">
+                    <h1>My Visit Pass</h1>
+                </div>
+                <div class="mypass-container">
+                    <div id="passDisplay" class="pass-display hidden">
+                        <div class="pass-card">
+                            <div class="pass-header">
+                                <h2 id="passVisitorName">-</h2>
+                                <span class="pass-status" id="passStatus">-</span>
+                            </div>
+                            <div class="pass-details">
+                                <div class="detail-row">
+                                    <span class="detail-label">Pass ID:</span>
+                                    <span class="detail-value" id="passId">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Valid Date:</span>
+                                    <span class="detail-value" id="passDate">-</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Purpose:</span>
+                                    <span class="detail-value" id="passPurpose">-</span>
+                                </div>
+                            </div>
+                            <div class="pass-qr">
+                                <div id="qrCode" class="qr-placeholder">QR Code</div>
+                            </div>
+                            <button class="btn btn-primary" onclick="downloadPass()">Download Pass</button>
+                        </div>
+                    </div>
+                    <div id="noPassMessage" class="no-pass-message">
+                        <p>No active pass at the moment</p>
+                        <button class="btn btn-primary" onclick="navigateTo('requests')">Request a Visit</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Visit History View (Visitor) -->
+            <section id="historyView" class="view">
+                <div class="page-header">
+                    <h1>My Visit History</h1>
+                </div>
+                <div class="history-container">
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Purpose</th>
+                                    <th>Check-in</th>
+                                    <th>Check-out</th>
+                                    <th>Duration</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile/Settings View -->
+            <section id="profileView" class="view">
+                <div class="page-header">
+                    <h1>Profile Settings</h1>
+                </div>
+                <div class="profile-container">
+                    <div class="profile-card">
+                        <h2>Personal Information</h2>
+                        <form id="profileForm" onsubmit="updateProfile(event)">
+                            <div class="form-group">
+                                <label>Full Name</label>
+                                <input type="text" id="profileName" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" id="profileEmail" readonly>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone</label>
+                                <input type="tel" id="profilePhone">
+                            </div>
+                            <div class="form-group">
+                                <label>Role</label>
+                                <input type="text" id="profileRole" readonly>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Update Profile</button>
+                        </form>
+                    </div>
+                    <div class="profile-card">
+                        <h2>Change Password</h2>
+                        <form id="passwordForm" onsubmit="changePassword(event)">
+                            <div class="form-group">
+                                <label>Current Password</label>
+                                <input type="password" id="currentPassword" required autocomplete="current-password">
+                            </div>
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <input type="password" id="newPassword" required autocomplete="new-password">
+                            </div>
+                            <div class="form-group">
+                                <label>Confirm Password</label>
+                                <input type="password" id="confirmPassword" required autocomplete="new-password">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <div id="requestModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>New Visit Request</h2>
+                <button class="close-btn" onclick="closeModal('requestModal')">&times;</button>
+            </div>
+            <form onsubmit="submitRequest(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="requestName" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="requestEmail" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel" id="requestPhone" required>
+                </div>
+                <div class="form-group">
+                    <label>Company/Organization</label>
+                    <input type="text" id="requestCompany">
+                </div>
+                <div class="form-group">
+                    <label>Purpose of Visit</label>
+                    <textarea id="requestPurpose" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Visit Date</label>
+                    <input type="date" id="requestDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Department/Person to Meet</label>
+                    <input type="text" id="requestDepartment" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('requestModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit Request</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="notification" class="notification hidden"></div>
+
+    <script>
+        // ===== APP STATE =====
+        const appState = {
+            currentUser: null,
+            currentRole: null,
+            isAuthenticated: false,
+        };
+
+        // ===== MOCK DATA =====
+        const mockVisitors = [
+            { id: 1, name: 'John Doe', email: 'john@example.com', phone: '+91 9876543210', company: 'Tech Corp', visits: 5, lastVisit: '2024-04-20' },
+            { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '+91 9876543211', company: 'Design Inc', visits: 3, lastVisit: '2024-04-19' },
+            { id: 3, name: 'Mike Johnson', email: 'mike@example.com', phone: '+91 9876543212', company: 'Consulting Ltd', visits: 8, lastVisit: '2024-04-18' },
+        ];
+
+        const mockRequests = [
+            { id: 1, visitorName: 'John Doe', email: 'john@example.com', purpose: 'Meeting', date: '2024-04-25', status: 'pending' },
+            { id: 2, visitorName: 'Jane Smith', email: 'jane@example.com', purpose: 'Conference', date: '2024-04-26', status: 'approved' },
+            { id: 3, visitorName: 'Mike Johnson', email: 'mike@example.com', purpose: 'Presentation', date: '2024-04-27', status: 'pending' },
+        ];
+
+        const mockPasses = [
+            { id: 'PASS001', visitorName: 'John Doe', date: '2024-04-25', purpose: 'Meeting', status: 'active', qrCode: 'QR001' },
+            { id: 'PASS002', visitorName: 'Jane Smith', date: '2024-04-26', purpose: 'Conference', status: 'active', qrCode: 'QR002' },
+            { id: 'PASS003', visitorName: 'Mike Johnson', date: '2024-04-27', purpose: 'Presentation', status: 'pending', qrCode: 'QR003' },
+        ];
+
+        const mockTracking = [
+            { id: 1, visitorName: 'John Doe', passId: 'PASS001', type: 'checkin', time: '2024-04-25 09:30', duration: '2 hours' },
+            { id: 2, visitorName: 'Jane Smith', passId: 'PASS002', type: 'checkin', time: '2024-04-26 10:15', duration: '1.5 hours' },
+            { id: 3, visitorName: 'Mike Johnson', passId: 'PASS003', type: 'checkout', time: '2024-04-27 15:45', duration: '3 hours' },
+        ];
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeApp();
+        });
+
+        function initializeApp() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedRole = localStorage.getItem('userRole');
+            
+            if (savedUser && savedRole) {
+                try {
+                    appState.currentUser = JSON.parse(savedUser);
+                    appState.currentRole = savedRole;
+                    appState.isAuthenticated = true;
+                    showDashboard();
+                } catch (error) {
+                    showRoleSelection();
+                }
+            }
+        }
+
+        // ===== ROLE SELECTION =====
+        function selectRole(role) {
+            appState.currentRole = role;
+            localStorage.setItem('userRole', role);
+            closeModal('roleModal');
+            showAuthContainer();
+        }
+
+        function showRoleSelection() {
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('dashboardContainer').classList.add('hidden');
+            document.getElementById('roleModal').classList.add('active');
+            document.getElementById('roleModal').classList.remove('hidden');
+        }
+
+        // ===== AUTHENTICATION =====
+        function showAuthContainer() {
+            document.getElementById('roleModal').classList.remove('active');
+            document.getElementById('roleModal').classList.add('hidden');
+            document.getElementById('authContainer').classList.remove('hidden');
+            document.getElementById('dashboardContainer').classList.add('hidden');
+        }
+
+        function toggleAuthForm(formName) {
+            document.querySelectorAll('.auth-form').forEach(form => {
+                form.classList.remove('active');
+            });
+            document.getElementById(formName + 'Form').classList.add('active');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+
+            if (!email || !password) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            const user = {
+                id: Math.random().toString(36).substr(2, 9),
+                name: email.split('@')[0].charAt(0).toUpperCase() + email.split('@')[0].slice(1),
+                email: email,
+                role: appState.currentRole,
+                phone: '+91 XXXXXXXXXX',
+                loginTime: new Date().toISOString()
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('userRole', appState.currentRole);
+            appState.currentUser = user;
+            appState.isAuthenticated = true;
+
+            showNotification('Login successful!', 'success');
+            document.getElementById('loginEmail').value = '';
+            document.getElementById('loginPassword').value = '';
+
+            setTimeout(() => showDashboard(), 500);
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const phone = document.getElementById('signupPhone').value;
+            const password = document.getElementById('signupPassword').value;
+            const confirmPassword = document.getElementById('signupConfirmPassword').value;
+
+            if (!name || !email || !phone || !password || !confirmPassword) {
+                showNotification('Please fill in all fields', 'error');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters long', 'error');
+                return;
+            }
+
+            const user = {
+                id: Math.random().toString(36).substr(2, 9),
+                name: name,
+                email: email,
+                phone: phone,
+                role: appState.currentRole,
+                createdAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('currentUser', JSON.stringify(user));
+            localStorage.setItem('userRole', appState.currentRole);
+            appState.currentUser = user;
+            appState.isAuthenticated = true;
+
+            showNotification('Account created successfully!', 'success');
+            
+            setTimeout(() => showDashboard(), 500);
+        }
+
+        // ===== DASHBOARD =====
+        function showDashboard() {
+            document.getElementById('roleModal').classList.add('hidden');
+            document.getElementById('authContainer').classList.add('hidden');
+            document.getElementById('dashboardContainer').classList.remove('hidden');
+            updateNavbar();
+            updateSidebar();
+            loadDashboardData();
+            navigateTo('dashboard');
+        }
+
+        function updateNavbar() {
+            if (appState.currentUser) {
+                document.getElementById('userGreeting').textContent = `Welcome, ${appState.currentUser.name}`;
+            }
+        }
+
+        function updateSidebar() {
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                const role = item.getAttribute('data-role');
+                item.style.display = (role === 'all' || role === appState.currentRole) ? 'flex' : 'none';
+            });
+        }
+
+        // ===== NAVIGATION =====
+        function navigateTo(view) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            const viewElement = document.getElementById(view + 'View');
+            if (viewElement) {
+                viewElement.classList.add('active');
+            }
+
+            if (view === 'requests') loadRequests();
+            else if (view === 'visitors') loadVisitors();
+            else if (view === 'passes') loadPasses();
+            else if (view === 'tracking') loadTracking();
+            else if (view === 'history') loadVisitHistory();
+            else if (view === 'profile') loadProfile();
+        }
+
+        // ===== MODAL FUNCTIONS =====
+        function openNewRequestModal() {
+            const modal = document.getElementById('requestModal');
+            modal.classList.add('active');
+            modal.classList.remove('hidden');
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            modal.classList.add('hidden');
+        }
+
+        document.addEventListener('click', function(event) {
+            if (event.target.classList && event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+                event.target.classList.add('hidden');
+            }
+        });
+
+        // ===== REQUESTS =====
+        function loadRequests() {
+            const tbody = document.getElementById('requestsTableBody');
+            tbody.innerHTML = '';
+            
+            mockRequests.forEach(request => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${request.visitorName}</td>
+                    <td>${request.email}</td>
+                    <td>${request.purpose}</td>
+                    <td>${formatDate(request.date)}</td>
+                    <td><span class="status-badge status-${request.status}">${request.status.charAt(0).toUpperCase() + request.status.slice(1)}</span></td>
+                    <td>
+                        <div class="action-buttons">
+                            ${request.status === 'pending' ? `
+                                <button class="btn btn-success btn-sm" onclick="approveRequest(${request.id})">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="rejectRequest(${request.id})">Reject</button>
+                            ` : `
+                                <button class="btn btn-secondary btn-sm" onclick="viewRequest(${request.id})">View</button>
+                            `}
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function approveRequest(requestId) {
+            const request = mockRequests.find(r => r.id === requestId);
+            if (request) {
+                request.status = 'approved';
+                const pass = {
+                    id: generatePassCode(),
+                    visitorName: request.visitorName,
+                    date: request.date,
+                    purpose: request.purpose,
+                    status: 'active',
+                    qrCode: 'QR' + Math.random().toString(36).substr(2, 5).toUpperCase()
+                };
+                mockPasses.push(pass);
+                loadRequests();
+                showNotification(`Request approved! Pass ID: ${pass.id}`, 'success');
+            }
+        }
+
+        function rejectRequest(requestId) {
+            const request = mockRequests.find(r => r.id === requestId);
+            if (request) {
+                request.status = 'rejected';
+                loadRequests();
+                showNotification('Request rejected', 'success');
+            }
+        }
+
+        function submitRequest(event) {
+            event.preventDefault();
+            const name = document.getElementById('requestName').value;
+            const email = document.getElementById('requestEmail').value;
+            const purpose = document.getElementById('requestPurpose').value;
+            const date = document.getElementById('requestDate').value;
+
+            const newRequest = {
+                id: mockRequests.length + 1,
+                visitorName: name,
+                email: email,
+                purpose: purpose,
+                date: date,
+                status: 'pending'
+            };
+
+            mockRequests.push(newRequest);
+            closeModal('requestModal');
+            showNotification('Visit request submitted successfully!', 'success');
+            document.getElementById('requestName').value = '';
+            document.getElementById('requestEmail').value = '';
+            document.getElementById('requestPurpose').value = '';
+            document.getElementById('requestDate').value = '';
+        }
+
+        // ===== VISITORS =====
+        function loadVisitors() {
+            displayVisitors(mockVisitors);
+        }
+
+        function displayVisitors(visitors) {
+            const tbody = document.getElementById('visitorsTableBody');
+            tbody.innerHTML = '';
+            
+            visitors.forEach(visitor => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${visitor.name}</td>
+                    <td>${visitor.email}</td>
+                    <td>${visitor.phone}</td>
+                    <td>${visitor.company}</td>
+                    <td>${visitor.visits}</td>
+                    <td>${formatDate(visitor.lastVisit)}</td>
+                    <td><div class="action-buttons"><button class="btn btn-primary btn-sm" onclick="viewVisitorDetails(${visitor.id})">View</button></div></td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterVisitors() {
+            const searchTerm = document.getElementById('visitorSearch').value.toLowerCase();
+            const filtered = mockVisitors.filter(v => 
+                v.name.toLowerCase().includes(searchTerm) ||
+                v.email.toLowerCase().includes(searchTerm)
+            );
+            displayVisitors(filtered);
+        }
+
+        function viewVisitorDetails(visitorId) {
+            showNotification('Viewing visitor details', 'info');
+        }
+
+        // ===== PASSES =====
+        function loadPasses() {
+            displayPasses(mockPasses);
+        }
+
+        function displayPasses(passes) {
+            const grid = document.getElementById('passesGrid');
+            grid.innerHTML = '';
+            
+            passes.forEach(pass => {
+                const card = document.createElement('div');
+                card.className = 'pass-card';
+                card.innerHTML = `
+                    <div class="pass-header">
+                        <h3>${pass.visitorName}</h3>
+                        <span class="pass-status status-${pass.status}">${pass.status}</span>
+                    </div>
+                    <div class="pass-details">
+                        <div class="detail-row">
+                            <span class="detail-label">Pass ID:</span>
+                            <span class="detail-value">${pass.id}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Purpose:</span>
+                            <span class="detail-value">${pass.purpose}</span>
+                        </div>
+                    </div>
+                    <div class="pass-qr">
+                        <div class="qr-placeholder">${pass.qrCode}</div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterPasses() {
+            const searchTerm = document.getElementById('passSearch').value.toLowerCase();
+            const filtered = mockPasses.filter(p => 
+                p.visitorName.toLowerCase().includes(searchTerm) ||
+                p.id.toLowerCase().includes(searchTerm)
+            );
+            displayPasses(filtered);
+        }
+
+        // ===== TRACKING =====
+        function loadTracking() {
+            displayTracking(mockTracking);
+        }
+
+        function displayTracking(tracking) {
+            const tbody = document.getElementById('trackingTableBody');
+            tbody.innerHTML = '';
+            
+            tracking.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.visitorName}</td>
+                    <td>${record.passId}</td>
+                    <td><span class="status-badge ${record.type === 'checkin' ? 'status-approved' : 'status-pending'}">${record.type === 'checkin' ? 'Check-in' : 'Check-out'}</span></td>
+                    <td>${record.time}</td>
+                    <td>${record.duration}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        function filterTracking() {
+            displayTracking(mockTracking);
+        }
+
+        function loadVisitHistory() {
+            const tbody = document.getElementById('historyTableBody');
+            tbody.innerHTML = '';
+            
+            mockTracking.forEach(record => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${record.time.split(' ')[0]}</td>
+                    <td>-</td>
+                    <td>${record.time.split(' ')[1]}</td>
+                    <td>-</td>
+                    <td>${record.duration}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ===== SCANNING =====
+        function startCamera() {
+            const placeholder = document.getElementById('cameraPlaceholder');
+            placeholder.innerHTML = `
+                <div class="camera-placeholder">
+                    <div class="camera-icon">📷</div>
+                    <p>Camera is running</p>
+                    <button class="btn btn-secondary" onclick="stopCamera()">Stop Camera</button>
+                </div>
+            `;
+            showNotification('Camera started', 'success');
+        }
+
+        function stopCamera() {
+            const placeholder = document.getElementById('cameraPlaceholder');
+            placeholder.innerHTML = `
+                <div class="camera-placeholder">
+                    <div class="camera-icon">📷</div>
+                    <p>Camera feed will appear here</p>
+                    <button class="btn btn-primary" onclick="startCamera()">Start Camera</button>
+                </div>
+            `;
+        }
+
+        function verifyPassCode() {
+            const passCode = document.getElementById('manualPassCode').value;
+            if (!passCode) {
+                showNotification('Please enter a pass code', 'error');
+                return;
+            }
+
+            const pass = mockPasses.find(p => p.id === passCode || p.qrCode === passCode);
+            const verificationResult = document.getElementById('verificationResult');
+
+            if (pass) {
+                verificationResult.className = 'verification-box verification-success';
+                verificationResult.innerHTML = `
+                    <div>
+                        <h3 style="color: var(--success-color); margin-bottom: 1rem;">✓ Valid Pass</h3>
+                        <p>Visitor: <strong>${pass.visitorName}</strong></p>
+                        <p>Purpose: <strong>${pass.purpose}</strong></p>
+                    </div>
+                `;
+                showNotification('Pass verified!', 'success');
+            } else {
+                verificationResult.className = 'verification-box verification-error';
+                verificationResult.innerHTML = `<h3 style="color: var(--danger-color);">✗ Invalid Pass</h3>`;
+                showNotification('Invalid pass code', 'error');
+            }
+
+            document.getElementById('manualPassCode').value = '';
+        }
+
+        // ===== PROFILE =====
+        function loadProfile() {
+            if (appState.currentUser) {
+                document.getElementById('profileName').value = appState.currentUser.name;
+                document.getElementById('profileEmail').value = appState.currentUser.email;
+                document.getElementById('profilePhone').value = appState.currentUser.phone || '';
+                document.getElementById('profileRole').value = appState.currentRole.charAt(0).toUpperCase() + appState.currentRole.slice(1);
+            }
+        }
+
+        function updateProfile(event) {
+            event.preventDefault();
+            showNotification('Profile updated successfully', 'success');
+        }
+
+        function changePassword(event) {
+            event.preventDefault();
+            showNotification('Password changed successfully', 'success');
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        // ===== DASHBOARD DATA =====
+        function loadDashboardData() {
+            if (appState.currentRole === 'admin') {
+                document.getElementById('adminDashboard').classList.remove('hidden');
+                document.getElementById('securityDashboard').classList.add('hidden');
+                document.getElementById('visitorDashboard').classList.add('hidden');
+                document.getElementById('btnNewRequest').style.display = 'inline-block';
+                updateAdminStats();
+            } else if (appState.currentRole === 'security') {
+                document.getElementById('adminDashboard').classList.add('hidden');
+                document.getElementById('securityDashboard').classList.remove('hidden');
+                document.getElementById('visitorDashboard').classList.add('hidden');
+                updateSecurityStats();
+            } else if (appState.currentRole === 'visitor') {
+                document.getElementById('adminDashboard').classList.add('hidden');
+                document.getElementById('securityDashboard').classList.add('hidden');
+                document.getElementById('visitorDashboard').classList.remove('hidden');
+                updateVisitorStats();
+            }
+        }
+
+        function updateAdminStats() {
+            document.getElementById('totalVisitors').textContent = Math.floor(Math.random() * 1000) + 100;
+            document.getElementById('pendingRequests').textContent = Math.floor(Math.random() * 50) + 5;
+            document.getElementById('activePasses').textContent = Math.floor(Math.random() * 100) + 20;
+            document.getElementById('todayCheckIns').textContent = Math.floor(Math.random() * 30) + 5;
+        }
+
+        function updateSecurityStats() {
+            document.getElementById('checkedInToday').textContent = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('pendingVerifications').textContent = Math.floor(Math.random() * 10) + 2;
+            document.getElementById('activePremises').textContent = Math.floor(Math.random() * 20) + 5;
+        }
+
+        function updateVisitorStats() {
+            document.getElementById('myRequests').textContent = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('myApprovedPasses').textContent = Math.floor(Math.random() * 5) + 1;
+            document.getElementById('totalVisits').textContent = Math.floor(Math.random() * 20) + 2;
+        }
+
+        // ===== LOGOUT =====
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('userRole');
+                appState.currentUser = null;
+                appState.currentRole = null;
+                appState.isAuthenticated = false;
+                showRoleSelection();
+                showNotification('Logged out successfully', 'success');
+            }
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function showNotification(message, type = 'info') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = `notification ${type}`;
+            notification.classList.remove('hidden');
+
+            setTimeout(() => {
+                notification.classList.add('hidden');
+            }, 3000);
+        }
+
+        function generatePassCode() {
+            return 'PASS' + Math.random().toString(36).substr(2, 9).toUpperCase();
+        }
+
+        function formatDate(date) {
+            return new Date(date).toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        function viewRequest(requestId) {
+            showNotification('Viewing request details', 'info');
+        }
+    </script>
+</body>
+</html>
